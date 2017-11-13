@@ -4,31 +4,45 @@ using UnityEngine;
 
 public class Rocket : MonoBehaviour
 {
+    [SerializeField]float rotateStrength = 100f;
+    [SerializeField]float rthrustStrength = 100f;
     Rigidbody rb;
-    // Use this for initialization
+    AudioSource rocketSound;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        rocketSound = GetComponent<AudioSource>();
     }
 	
     // Update is called once per frame
     void Update()
     {
-        ProsesInput();
+        Thrust();
+        Rotate();
     }
 
-    void ProsesInput()
-    {   
-
+    void Thrust()
+    {
+//        float speed = rotateStrength * Time.deltaTime;
         if (Input.GetKey(KeyCode.Space))
         {
-            rb.AddRelativeForce(Vector3.up);
-
+            rb.AddRelativeForce(Vector3.up * rthrustStrength);
+            if (!rocketSound.isPlaying)
+                rocketSound.Play();
         }
+        else
+            rocketSound.Stop();
+    }
+
+    void Rotate()
+    {
+        float speed = rotateStrength * Time.deltaTime;
+        rb.freezeRotation = true;
         if (Input.GetKey(KeyCode.A))
-            print("A Pressed");
+            transform.Rotate(Vector3.forward * speed);
         else if (Input.GetKey(KeyCode.D))
-            print("D Pressed");
-        
+            transform.Rotate(Vector3.back * speed);
+        rb.freezeRotation = false;
     }
 }
